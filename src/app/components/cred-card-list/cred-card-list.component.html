@@ -1,0 +1,14 @@
+<mat-list>
+  <div mat-subheader>Credit Cards</div>
+  <mat-list-item
+    *ngFor="let creditCard of creditCards; last as last; let i = index"
+  >
+    <mat-icon mat-list-icon>credit_card</mat-icon>
+    <div mat-line>{{ creditCard.name }}</div>
+    <div mat-line>${{ creditCard.balance }} - {{ creditCard.interest }}%</div>
+    <button (click)="remove(i)" mat-icon-button>
+      <mat-icon>clear</mat-icon>
+    </button>
+    <mat-divider *ngIf="!last"></mat-divider>
+  </mat-list-item>
+</mat-list>

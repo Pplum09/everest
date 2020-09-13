@@ -1,0 +1,35 @@
+<form [formGroup]="creditCardForm" (ngSubmit)="addCard()" class="container">
+  <mat-form-field>
+    <mat-label>Name</mat-label>
+    <input
+      formControlName="name"
+      matInput
+      autocomplete="off"
+      placeholder="Name"
+    />
+  </mat-form-field>
+  <mat-form-field>
+    <mat-label>Balance</mat-label>
+    <span matPrefix><mat-icon>attach_money</mat-icon></span>
+    <input
+      formControlName="balance"
+      matInput
+      autocomplete="off"
+      placeholder="2303.83"
+    />
+  </mat-form-field>
+  <mat-form-field>
+    <mat-label>Interest</mat-label>
+    <input
+      formControlName="interest"
+      matInput
+      autocomplete="off"
+      placeholder="23.45"
+    />
+    <mat-icon [inline]="true" matSuffix>%</mat-icon>
+  </mat-form-field>
+  <button mat-raised-button color="accent">
+    <mat-icon>add</mat-icon>Add Card
+  </button>
+  <br />
+</form>

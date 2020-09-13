@@ -1,0 +1,19 @@
+<div class="container">
+  <button (click)="computeInterest()">Compute Interest</button>
+  <input (keyup)="computePayoff()" [(ngModel)]="paydownRate" />
+  <input (keyup)="computePayoff()" [(ngModel)]="totalBalance" />
+  <ngx-charts-line-chart
+    [results]="totalPayoff"
+    [gradient]="gradient"
+    [xAxis]="showXAxis"
+    [yAxis]="showYAxis"
+    [legend]="showLegend"
+    [showXAxisLabel]="showXAxisLabel"
+    [showYAxisLabel]="showYAxisLabel"
+    [xAxisLabel]="xAxisLabel"
+    [yAxisLabel]="yAxisLabel"
+    [autoScale]="autoScale"
+    scheme="vivid"
+  >
+  </ngx-charts-line-chart>
+</div>

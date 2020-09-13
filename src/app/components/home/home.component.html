@@ -1,0 +1,50 @@
+<div class="container">
+  <div class="accordion">
+    <mat-accordion>
+      <mat-expansion-panel>
+        <mat-expansion-panel-header>
+          <mat-panel-title> Add Credit Card </mat-panel-title>
+          <mat-panel-description *ngIf="!creditCards.length">
+            Add your card here to get started!
+          </mat-panel-description>
+        </mat-expansion-panel-header>
+        <app-add-card-form [(creditCards)]="creditCards"></app-add-card-form>
+      </mat-expansion-panel>
+    </mat-accordion>
+    <app-cred-card-list
+      [(creditCards)]="creditCards"
+      *ngIf="creditCards.length"
+      class="cc-list"
+    ></app-cred-card-list>
+    <div class="calculations">
+      <mat-form-field appearance="outline">
+        <mat-label>Input</mat-label>
+        <input matInput autocomplete="off">
+      </mat-form-field>
+      <mat-form-field appearance="outline">
+        <mat-label>Input</mat-label>
+        <input matInput autocomplete="off">
+      </mat-form-field>
+      <button mat-raised-button color="primary">Calculate</button>
+  </div>
+  </div>
+  <app-summary
+    [creditCards]="creditCards"
+    [paydownRate]="paydownRate"
+    class="summary"
+  ></app-summary>
+  <!-- <ngx-charts-line-chart
+  [results]="totalPayoff"
+  [gradient]="gradient"
+  [xAxis]="showXAxis"
+  [yAxis]="showYAxis"
+  [legend]="showLegend"
+  [showXAxisLabel]="showXAxisLabel"
+  [showYAxisLabel]="showYAxisLabel"
+  [xAxisLabel]="xAxisLabel"
+  [yAxisLabel]="yAxisLabel"
+  [autoScale]="autoScale"
+  scheme="vivid"
+>
+</ngx-charts-line-chart> -->
+</div>
