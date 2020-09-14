@@ -1,21 +1,28 @@
 .container {
   height: 100%;
+  width: 100%;
   display: flex;
   flex-direction: row;
 }
 
-.summary {
+.chart {
   flex: 3;
 }
 
-.accordion {
+.configuration {
   flex: 1;
   display: flex;
   flex-direction: column;
+  padding: 15px;
+  justify-content: space-around;
+}
+
+.add-card {
+  flex: 1;
 }
 
 .cc-list {
-  flex: 1;
+  flex: 3;
 }
 
 .calculations {

@@ -49,13 +49,10 @@ export class FinanceService {
     }
   }
 
-  public computeInterest(creditCards: CreditCard[]) {
+  public computeInterest(creditCards: CreditCard[], monthlyPayment: number) {
 
     let currentCardIndex = 0;
-    const years = 5;
-    const months = years * 12;
     let results = [];
-    const paydownRate = 150;
     const today = new Date();
     let year = today.getFullYear();
     const startYear = year;
@@ -82,7 +79,7 @@ export class FinanceService {
     do {
 
       // pay down current card
-      ccCopy[currentCardIndex].balance -= paydownRate;
+      ccCopy[currentCardIndex].balance -= monthlyPayment;
       if (ccCopy[currentCardIndex].balance < 0) {
         ccCopy[currentCardIndex].balance = 0;
       }
@@ -123,7 +120,7 @@ export class FinanceService {
         currentCardIndex++;
       }
 
-    } while (totalBalance > 0 && year < startYear + 10 && currentCardIndex < ccCopy.length);
+    } while (totalBalance > 0 && year < startYear + 40 && currentCardIndex < ccCopy.length);
 
 
 
