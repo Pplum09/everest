@@ -8,7 +8,7 @@
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e",
-    "deploy": "ng deploy -- --cname=pplum.io"
+    "deploy": "ng build --prod --baseHref='https://pplum09.github.io/everest/'"
   },
   "private": true,
   "dependencies": {
