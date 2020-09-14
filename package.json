@@ -7,7 +7,7 @@
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e",
-    "build": "ng build --baseHref=https://pplum09.github.com/everest/"
+    "build": "ng build -- --baseHref=https://pplum09.github.com/everest/"
   },
   "private": true,
   "dependencies": {
