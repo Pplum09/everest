@@ -9,23 +9,7 @@ import { FinanceService } from 'src/app/services/finance.service';
 })
 export class HomeComponent implements OnInit {
 
-  public creditCards: CreditCard[] = [
-    {
-      name: 'Citi',
-      balance: 1300.21,
-      interest: 23.16,
-    },
-    {
-      name: 'Discover',
-      balance: 4320.83,
-      interest: 23.16,
-    },
-    {
-      name: 'Bank of America',
-      balance: 3402.97,
-      interest: 23.16,
-    },
-  ];
+  public creditCards: CreditCard[] = [];
 
   public monthlyPayment = 500;
   public data = [];
