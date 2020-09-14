@@ -194,23 +194,7 @@ __webpack_require__.r(__webpack_exports__);
 class HomeComponent {
     constructor(financeService) {
         this.financeService = financeService;
-        this.creditCards = [
-            {
-                name: 'Citi',
-                balance: 1300.21,
-                interest: 23.16,
-            },
-            {
-                name: 'Discover',
-                balance: 4320.83,
-                interest: 23.16,
-            },
-            {
-                name: 'Bank of America',
-                balance: 3402.97,
-                interest: 23.16,
-            },
-        ];
+        this.creditCards = [];
         this.monthlyPayment = 500;
         this.data = [];
     }
