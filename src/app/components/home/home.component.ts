@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CreditCard } from 'src/app/models/credit-card.model';
 import { FinanceService } from 'src/app/services/finance.service';
+
 export interface PeriodicElement {
   name: string;
   position: number;
@@ -19,7 +20,7 @@ const ELEMENT_DATA: PeriodicElement[] = [
 })
 export class HomeComponent implements OnInit {
 
-  public monthsToPayoff = null;
+  public monthsToPayoff = 0;
   public totalPrincipal = 0;
   public totalInterestPaid = 0;
   public totalPaid = 0;

@@ -19,7 +19,7 @@ import { MatSliderModule } from '@angular/material/slider';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatCardModule } from '@angular/material/card';
 import { MatTableModule } from '@angular/material/table';
-
+import { PrettyMonth } from 'src/app/pipes/pretty-months.pipe';
 
 @NgModule({
   declarations: [
@@ -28,6 +28,7 @@ import { MatTableModule } from '@angular/material/table';
     CredCardListComponent,
     AddCardFormComponent,
     SummaryComponent,
+    PrettyMonth,
   ],
   imports: [
     BrowserModule,
