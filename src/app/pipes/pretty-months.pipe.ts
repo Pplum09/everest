@@ -11,9 +11,9 @@ export class PrettyMonth implements PipeTransform {
     const year = Math.trunc((months / 12));
     const month = months % 12;
     if (year && month) {
-      return `${year} years ${month} value`;
+      return `${year} years ${month} months`;
     } else if (!year && month) {
-      return `${month} value`;
+      return `${month} months`;
     } else if (year && !month) {
       return `${year} years`;
     }
