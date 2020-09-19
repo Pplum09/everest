@@ -637,6 +637,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _angular_material_card__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(/*! @angular/material/card */ "Wp6s");
 /* harmony import */ var _angular_material_table__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__(/*! @angular/material/table */ "+0xr");
 /* harmony import */ var src_app_pipes_pretty_months_pipe__WEBPACK_IMPORTED_MODULE_20__ = __webpack_require__(/*! src/app/pipes/pretty-months.pipe */ "Kf3Y");
+/* harmony import */ var _angular_service_worker__WEBPACK_IMPORTED_MODULE_21__ = __webpack_require__(/*! @angular/service-worker */ "Jho9");
+/* harmony import */ var _environments_environment__WEBPACK_IMPORTED_MODULE_22__ = __webpack_require__(/*! ../environments/environment */ "AytR");
+
+
+
 
 
 
@@ -678,6 +683,7 @@ AppModule.ɵinj = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdefineInjector
             _angular_material_form_field__WEBPACK_IMPORTED_MODULE_17__["MatFormFieldModule"],
             _angular_material_card__WEBPACK_IMPORTED_MODULE_18__["MatCardModule"],
             _angular_material_table__WEBPACK_IMPORTED_MODULE_19__["MatTableModule"],
+            _angular_service_worker__WEBPACK_IMPORTED_MODULE_21__["ServiceWorkerModule"].register('ngsw-worker.js', { enabled: _environments_environment__WEBPACK_IMPORTED_MODULE_22__["environment"].production }),
         ]] });
 (function () { (typeof ngJitMode === "undefined" || ngJitMode) && _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵsetNgModuleScope"](AppModule, { declarations: [_app_component__WEBPACK_IMPORTED_MODULE_3__["AppComponent"],
         _components_home_home_component__WEBPACK_IMPORTED_MODULE_5__["HomeComponent"],
@@ -698,7 +704,7 @@ AppModule.ɵinj = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdefineInjector
         _angular_material_slider__WEBPACK_IMPORTED_MODULE_16__["MatSliderModule"],
         _angular_material_form_field__WEBPACK_IMPORTED_MODULE_17__["MatFormFieldModule"],
         _angular_material_card__WEBPACK_IMPORTED_MODULE_18__["MatCardModule"],
-        _angular_material_table__WEBPACK_IMPORTED_MODULE_19__["MatTableModule"]] }); })();
+        _angular_material_table__WEBPACK_IMPORTED_MODULE_19__["MatTableModule"], _angular_service_worker__WEBPACK_IMPORTED_MODULE_21__["ServiceWorkerModule"]] }); })();
 /*@__PURE__*/ (function () { _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵsetClassMetadata"](AppModule, [{
         type: _angular_core__WEBPACK_IMPORTED_MODULE_1__["NgModule"],
         args: [{
@@ -726,6 +732,7 @@ AppModule.ɵinj = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdefineInjector
                     _angular_material_form_field__WEBPACK_IMPORTED_MODULE_17__["MatFormFieldModule"],
                     _angular_material_card__WEBPACK_IMPORTED_MODULE_18__["MatCardModule"],
                     _angular_material_table__WEBPACK_IMPORTED_MODULE_19__["MatTableModule"],
+                    _angular_service_worker__WEBPACK_IMPORTED_MODULE_21__["ServiceWorkerModule"].register('ngsw-worker.js', { enabled: _environments_environment__WEBPACK_IMPORTED_MODULE_22__["environment"].production }),
                 ],
                 providers: [],
                 bootstrap: [_app_component__WEBPACK_IMPORTED_MODULE_3__["AppComponent"]],
