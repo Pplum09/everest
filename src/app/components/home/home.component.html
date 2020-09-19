@@ -1,41 +1,91 @@
 <div class="container">
   <div class="configuration">
-    <mat-accordion class="add-card">
-      <div class="calculations">
-        <mat-form-field appearance="outline">
-          <mat-label>Expected Monthly Payment</mat-label>
-          <input [(ngModel)]="monthlyPayment" matInput autocomplete="off" />
-        </mat-form-field>
-        <button (click)="calculate()" mat-raised-button color="primary">
-          Calculate
-        </button>
-      </div>
-      <br />
-      <mat-expansion-panel>
-        <mat-expansion-panel-header>
-          <mat-panel-title> Add Card </mat-panel-title>
-        </mat-expansion-panel-header>
-        <app-add-card-form [(creditCards)]="creditCards"></app-add-card-form>
-      </mat-expansion-panel>
-    </mat-accordion>
     <app-cred-card-list
+      *ngIf="creditCards.length"
       [(creditCards)]="creditCards"
       class="cc-list"
     ></app-cred-card-list>
+    <button
+      *ngIf="creditCards.length && !displayForm"
+      (click)="displayCardForm()"
+      mat-raised-button
+      color="primary"
+    >
+      Add Card
+    </button>
+    <app-add-card-form
+      *ngIf="!creditCards.length || displayForm"
+      [(creditCards)]="creditCards"
+      (cardCreated)="cardCreated()"
+    ></app-add-card-form>
+    <br />
+    <mat-divider></mat-divider>
+    <br />
+    <mat-form-field appearance="outline">
+      <mat-label>Estimated Monthly Payment</mat-label>
+      <input [(ngModel)]="monthlyPayment" matInput autocomplete="off" />
+    </mat-form-field>
+    <button (click)="calculate()" mat-raised-button color="primary">
+      Calculate
+    </button>
+    <br />
+    <mat-divider></mat-divider>
+    <br />
+
+    <mat-card>
+      <h1 class="mat-h1">Your Results</h1>
+      <mat-list role="list">
+        <mat-list-item role="listitem">
+          <div class="list-item">
+            <div>Monthly payment</div>
+            <div>
+              <b>{{ monthlyPayment | currency }} </b>
+            </div>
+          </div>
+        </mat-list-item>
+        <mat-list-item role="listitem">
+          <div class="list-item">
+            <div>Total Time</div>
+            <div>
+              <b>{{ getTime(monthsToPayoff) }}</b>
+            </div>
+          </div>
+        </mat-list-item>
+        <mat-list-item role="listitem">
+          <div class="list-item">
+            <div>Total Principal Paid</div>
+            <div>{{ this.totalPrincipal | currency }}</div>
+          </div>
+        </mat-list-item>
+        <mat-divider></mat-divider>
+        <mat-list-item role="listitem">
+          <div class="list-item">
+            <div>Total Interest Paid</div>
+            <div>{{ totalInterestPaid | currency }}</div>
+          </div>
+        </mat-list-item>
+        <mat-list-item role="listitem">
+          <div class="list-item">
+            <div>Total Paid</div>
+            <div>{{ totalPaid | currency }}</div>
+          </div>
+        </mat-list-item>
+      </mat-list>
+    </mat-card>
   </div>
-  <div class="chart">
-    <ngx-charts-line-chart
-      [results]="data"
-      [gradient]="false"
-      [xAxis]="true"
-      [yAxis]="true"
-      [legend]="true"
-      [showXAxisLabel]="true"
-      [showYAxisLabel]="true"
-      xAxisLabel="Month"
-      yAxisLabel="Balance"
-      [autoScale]="true"
-      scheme="vivid"
-    ></ngx-charts-line-chart>
-  </div>
+  <!--<div class="chart">-->
+  <!--<ngx-charts-line-chart-->
+  <!--[results]="data"-->
+  <!--[gradient]="false"-->
+  <!--[xAxis]="true"-->
+  <!--[yAxis]="true"-->
+  <!--[legend]="true"-->
+  <!--[showXAxisLabel]="true"-->
+  <!--[showYAxisLabel]="true"-->
+  <!--xAxisLabel="Month"-->
+  <!--yAxisLabel="Balance"-->
+  <!--[autoScale]="true"-->
+  <!--scheme="vivid"-->
+  <!--></ngx-charts-line-chart>-->
+  <!--</div>-->
 </div>

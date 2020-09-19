@@ -11,6 +11,7 @@ export class AddCardFormComponent implements OnInit {
 
   @Input() creditCards: CreditCard[];
   @Output() creditCardsChange: EventEmitter<CreditCard[]> = new EventEmitter();
+  @Output() cardCreated: EventEmitter<any> = new EventEmitter();
 
   public creditCardForm = new FormGroup({
     name: new FormControl('', Validators.required),
@@ -33,6 +34,7 @@ export class AddCardFormComponent implements OnInit {
 
       this.creditCardForm.reset();
       this.creditCardsChange.emit([...this.creditCards]);
+      this.cardCreated.emit();
     }
   }
 }

@@ -1,4 +1,7 @@
 import { Injectable } from '@angular/core';
+import { Card } from 'src/app/models/card';
+
+const DEBUG = false;
 
 export interface CreditCard {
   name: string;
@@ -26,6 +29,10 @@ export class FinanceService {
     'December',
   ];
 
+  /** represents the max amount of months we will make calculations
+   *  the assumption is that you should never need 40 years to pay off cc debt
+   */
+  public maxMonths = 40 * 12;
   constructor() { }
 
   private computeTotalBalance(cards: CreditCard[]): number {
@@ -47,6 +54,117 @@ export class FinanceService {
       balance: card.balance,
       interest: card.interest,
     }
+  }
+
+  private constructCardObjs(creditCards: CreditCard[]): Card[] {
+    const cards = [];
+    const minimumPayment = 35;
+    for (const card of creditCards) {
+      cards.push(new Card(card.balance, card.interest, card.name, minimumPayment));
+    }
+    return cards
+  }
+
+  private allDebtsPaid(cards: Card[]): boolean {
+    return cards.every(card => card.isPaidOff());
+  }
+
+  private findAndFocusCard(cards: Card[]): void {
+    let focusNextCard = false;
+    for (const card of cards) {
+
+      // although payoff of the last card in the list will also set this
+      // variable, the loop will finish before it is read on a card that would
+      // have been out of bounds.
+      if (focusNextCard) {
+        card.focus();
+        focusNextCard = false;
+      }
+
+      if (card.focused && card.isPaidOff()) {
+        focusNextCard = true;
+        card.unfocus()
+      }
+
+    }
+  }
+
+  private payAllCards(cards: Card[], payment: number): number {
+
+    // if a card is paid off in one iteration, then the remaining payment will
+    // go toward the next card. This includes minimum payments as well.
+    let remainingMoney = 0;
+    let totalPayment = 0;
+    for (const card of cards) {
+      let paymentAmount = 0;
+      if (card.focused) {
+        paymentAmount = payment;
+      } else {
+        paymentAmount = card.minimumPayment;
+      }
+
+
+      const leftOver = card.balance - paymentAmount;
+      if (leftOver < 0) {
+        remainingMoney += -leftOver;
+        paymentAmount -= remainingMoney;
+      }
+      const finalPayment = paymentAmount + remainingMoney;
+      totalPayment += finalPayment;
+      card.applyPayment(finalPayment);
+    }
+
+    // moves the focused card to next if current card has been paid off
+    // during this iteration
+    this.findAndFocusCard(cards);
+    return totalPayment;
+  }
+
+  private applyInterest(cards: Card[]): void {
+    for (const card of cards) {
+      if (!card.isPaidOff()) {
+        card.applyInterest();
+      }
+    }
+  }
+
+  private calculateMontlyPayment(cards: Card[], payment: number): number {
+    for (const card of cards) {
+      payment -= card.minimumPayment;
+    }
+    return payment;
+  }
+
+  public calculatePayoff(creditCards: CreditCard[], payment: number): {totalMonths: number, totalPayment: number} {
+
+    const cards = this.constructCardObjs(creditCards);
+    let currentMonth = 0;
+    let totalPayment = 0;
+    cards[0].focus();
+    do {
+      // pay off debt
+      const currentPayment = this.payAllCards(cards, payment);
+      totalPayment += currentPayment;
+
+      // apply interest
+      this.applyInterest(cards);
+
+      // iterate time
+      currentMonth++;
+
+      // print state
+      if (DEBUG) {
+        for (const card of cards) {
+          card.prettyPrint()
+        }
+      }
+    } while (!this.allDebtsPaid(cards) && currentMonth < this.maxMonths);
+
+    const results = {
+      totalMonths: currentMonth,
+      totalPayment,
+    }
+    return results;
   }
 
   public computeInterest(creditCards: CreditCard[], monthlyPayment: number) {
