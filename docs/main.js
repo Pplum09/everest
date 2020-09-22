@@ -259,13 +259,20 @@ class HomeComponent {
         this.displayColumns = ['0'].concat(this.inputData.map(x => x.position.toString()));
         this.displayData = this.inputColumns.map(x => this.formatInputRow(x));
     }
+    parseTotalInterest(metrics) {
+        let total = 0;
+        for (const key of Object.keys(metrics)) {
+            total += metrics[key][metrics[key].length - 1].interestAccrued;
+        }
+        return total;
+    }
     calculate() {
         //this.data = this.financeService.computeInterest(this.creditCards, this.monthlyPayment);
         this.totalPrincipal = this.getTotalPrincipal(this.creditCards);
         const monthlyPayment = +this.monthlyPayment;
         const results = this.financeService.calculatePayoff(this.creditCards, monthlyPayment);
         this.monthsToPayoff = results.totalMonths;
-        this.totalInterestPaid = results.totalPayment - this.totalPrincipal;
+        this.totalInterestPaid = this.parseTotalInterest(results.metrics);
         this.totalPaid = this.totalInterestPaid + this.totalPrincipal;
     }
     getTotalPrincipal(cards) {
@@ -885,6 +892,14 @@ __webpack_require__.r(__webpack_exports__);
 
 
 const DEBUG = false;
+//export interface Metrics {
+//month: number;
+//interest: number;
+//payment: number;
+//principal: number;
+//balance: number;
+//interestAccrued: number;
+//}
 class FinanceService {
     constructor() {
         this.months = [
@@ -990,17 +1005,62 @@ class FinanceService {
         }
         return payment;
     }
+    calculateInterest(balance, interest) {
+        const apr = interest / 100;
+        return balance * (apr / 12);
+    }
     calculatePayoff(creditCards, payment) {
         const cards = this.constructCardObjs(creditCards);
         let currentMonth = 0;
         let totalPayment = 0;
+        let metrics = {};
         cards[0].focus();
+        let remainingMoney = 0;
         do {
-            // pay off debt
-            const currentPayment = this.payAllCards(cards, payment);
-            totalPayment += currentPayment;
-            // apply interest
-            this.applyInterest(cards);
+            for (const card of cards) {
+                let interest = 0;
+                let principal = 0;
+                if (!card.isPaidOff()) {
+                    // calculate interest
+                    interest = this.calculateInterest(card.balance, card.interest);
+                    card.interestAccrued += interest;
+                    // calcualte monthly payment
+                    if (card.focused) {
+                        principal = payment;
+                    }
+                    else {
+                        principal = card.minimumPayment;
+                    }
+                    principal -= interest;
+                    // add remaining money from last payments to payment amount and
+                    // remove from remainingMoney. We will add the remainder of this
+                    // transaction back into the remainingMoney pot.
+                    principal += remainingMoney;
+                    remainingMoney -= remainingMoney;
+                    const leftOver = card.balance - principal;
+                    if (leftOver < 0) {
+                        remainingMoney = -leftOver;
+                        principal -= remainingMoney;
+                    }
+                    // calculate leftover balance
+                    card.balance = card.balance - principal;
+                    // determine if another card needs to become the new focus card after a
+                    // payment
+                    this.findAndFocusCard(cards);
+                }
+                // add metrics per card for data tables in the component
+                if (!metrics.hasOwnProperty(card.name)) {
+                    metrics[card.name] = [];
+                }
+                metrics[card.name].push({
+                    month: currentMonth,
+                    interest,
+                    payment,
+                    principal,
+                    balance: card.balance,
+                    interestAccrued: card.interestAccrued,
+                });
+            }
             // iterate time
             currentMonth++;
             // print state
@@ -1013,6 +1073,7 @@ class FinanceService {
         const results = {
             totalMonths: currentMonth,
             totalPayment,
+            metrics,
         };
         return results;
     }
@@ -1111,6 +1172,7 @@ class Card {
         this.focused = false;
         this.dailyInterest = this.interest / 100 / 365;
         this.minimumPayment = minimumPayment;
+        this.interestAccrued = 0;
     }
     applyInterest() {
         this.balance = (30 * this.balance * this.dailyInterest) + this.balance;
