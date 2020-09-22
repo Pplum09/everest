@@ -5,6 +5,7 @@ export class Card {
   name: string;
   focused: boolean;
   minimumPayment: number;
+  interestAccrued: number;
 
   constructor(balance: number, interest: number, name: string, minimumPayment: number) {
     this.balance = balance;
@@ -13,6 +14,7 @@ export class Card {
     this.focused = false;
     this.dailyInterest = this.interest / 100 / 365;
     this.minimumPayment = minimumPayment;
+    this.interestAccrued = 0;
   }
 
   public applyInterest(): void {

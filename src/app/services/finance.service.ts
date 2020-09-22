@@ -9,6 +9,16 @@ export interface CreditCard {
   interest: number;
 }
 
+
+//export interface Metrics {
+  //month: number;
+  //interest: number;
+  //payment: number;
+  //principal: number;
+  //balance: number;
+  //interestAccrued: number;
+//}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -134,20 +144,72 @@ export class FinanceService {
     }
     return payment;
   }
+  private calculateInterest(balance: number, interest): number {
+    const apr = interest / 100;
+    return balance * (apr / 12);
+  }
 
-  public calculatePayoff(creditCards: CreditCard[], payment: number): {totalMonths: number, totalPayment: number} {
+  public calculatePayoff(creditCards: CreditCard[], payment: number) {
 
     const cards = this.constructCardObjs(creditCards);
     let currentMonth = 0;
     let totalPayment = 0;
+    let metrics = {};
     cards[0].focus();
+    let remainingMoney = 0;
     do {
-      // pay off debt
-      const currentPayment = this.payAllCards(cards, payment);
-      totalPayment += currentPayment;
+      for (const card of cards) {
 
-      // apply interest
-      this.applyInterest(cards);
+        let interest = 0;
+        let principal = 0;
+        if (!card.isPaidOff()) {
+          // calculate interest
+          interest = this.calculateInterest(card.balance, card.interest);
+          card.interestAccrued += interest;
+
+          // calcualte monthly payment
+          if (card.focused) {
+            principal = payment;
+          } else {
+            principal = card.minimumPayment;
+          }
+
+          principal -= interest;
+
+          // add remaining money from last payments to payment amount and
+          // remove from remainingMoney. We will add the remainder of this
+          // transaction back into the remainingMoney pot.
+          principal += remainingMoney;
+          remainingMoney -= remainingMoney;
+
+          const leftOver = card.balance - principal;
+          if (leftOver < 0) {
+            remainingMoney = -leftOver;
+            principal -= remainingMoney;
+          }
+
+          // calculate leftover balance
+          card.balance = card.balance - principal;
+
+          // determine if another card needs to become the new focus card after a
+          // payment
+          this.findAndFocusCard(cards);
+        }
+
+        // add metrics per card for data tables in the component
+        if (!metrics.hasOwnProperty(card.name)) {
+          metrics[card.name] = [];
+        }
+
+        metrics[card.name].push({
+          month: currentMonth,
+          interest,
+          payment,
+          principal,
+          balance: card.balance,
+          interestAccrued: card.interestAccrued,
+        });
+      }
 
       // iterate time
       currentMonth++;
@@ -163,7 +225,9 @@ export class FinanceService {
     const results = {
       totalMonths: currentMonth,
       totalPayment,
+      metrics,
     }
+
     return results;
   }
 

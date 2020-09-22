@@ -59,13 +59,20 @@ export class HomeComponent implements OnInit {
     this.displayData = this.inputColumns.map(x => this.formatInputRow(x));
   }
 
+  private parseTotalInterest(metrics): number {
+    let total = 0;
+    for (const key of Object.keys(metrics)) {
+      total += metrics[key][metrics[key].length - 1].interestAccrued;
+    }
+    return total;
+  }
   public calculate(): void {
     //this.data = this.financeService.computeInterest(this.creditCards, this.monthlyPayment);
     this.totalPrincipal = this.getTotalPrincipal(this.creditCards);
     const monthlyPayment = +this.monthlyPayment;
     const results = this.financeService.calculatePayoff(this.creditCards, monthlyPayment);
     this.monthsToPayoff = results.totalMonths;
-    this.totalInterestPaid = results.totalPayment - this.totalPrincipal;
+    this.totalInterestPaid = this.parseTotalInterest(results.metrics);
     this.totalPaid = this.totalInterestPaid + this.totalPrincipal;
   }
 
