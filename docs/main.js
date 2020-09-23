@@ -224,10 +224,35 @@ function HomeComponent_app_add_card_form_4_Template(rf, ctx) { if (rf & 1) {
 } }
 const ELEMENT_DATA = [
     { position: 1, name: 'Hydrogen', weight: 1.0079, symbol: 'H' },
+    { position: 2, name: 'Helium', weight: 4.0026, symbol: 'He' },
+    { position: 3, name: 'Lithium', weight: 6.941, symbol: 'Li' },
+    { position: 4, name: 'Beryllium', weight: 9.0122, symbol: 'Be' },
+    { position: 5, name: 'Boron', weight: 10.811, symbol: 'B' },
+    { position: 6, name: 'Carbon', weight: 12.0107, symbol: 'C' },
+    { position: 7, name: 'Nitrogen', weight: 14.007, symbol: 'N' },
+    { position: 8, name: 'Oxygen', weight: 15.9994, symbol: 'O' },
+    { position: 9, name: 'Fluorine', weight: 18.9984, symbol: 'F' },
+    { position: 10, name: 'Neon', weight: 20.1797, symbol: 'Ne' },
 ];
 class HomeComponent {
     constructor(financeService) {
         this.financeService = financeService;
+        this.single = [
+            {
+                "name": "Germany",
+                "value": 8940000
+            },
+            {
+                "name": "USA",
+                "value": 5000000
+            },
+            {
+                "name": "France",
+                "value": 7200000
+            }
+        ];
+        this.displayedColumns = ['name', 'position', 'weight', 'symbol', 'position', 'weight', 'symbol', 'star'];
+        this.dataSource = ELEMENT_DATA;
         this.monthsToPayoff = 0;
         this.totalPrincipal = 0;
         this.totalInterestPaid = 0;
@@ -252,13 +277,11 @@ class HomeComponent {
         ];
         this.monthlyPayment = 500;
         this.data = [];
-        this.inputColumns = ['position', 'name', 'weight', 'symbol'];
-        this.inputData = ELEMENT_DATA;
+        this.monthsToPayoffAvalanche = 0;
+        this.totalInterestPaidAvalanche = 0;
+        this.totalPaidAvalanche = 0;
     }
-    ngOnInit() {
-        this.displayColumns = ['0'].concat(this.inputData.map(x => x.position.toString()));
-        this.displayData = this.inputColumns.map(x => this.formatInputRow(x));
-    }
+    ngOnInit() { }
     parseTotalInterest(metrics) {
         let total = 0;
         for (const key of Object.keys(metrics)) {
@@ -270,10 +293,18 @@ class HomeComponent {
         //this.data = this.financeService.computeInterest(this.creditCards, this.monthlyPayment);
         this.totalPrincipal = this.getTotalPrincipal(this.creditCards);
         const monthlyPayment = +this.monthlyPayment;
-        const results = this.financeService.calculatePayoff(this.creditCards, monthlyPayment);
+        // snowball calculations
+        const snowballCards = [...this.creditCards].sort((a, b) => a.balance - b.balance);
+        const results = this.financeService.calculatePayoff(snowballCards, monthlyPayment);
         this.monthsToPayoff = results.totalMonths;
         this.totalInterestPaid = this.parseTotalInterest(results.metrics);
         this.totalPaid = this.totalInterestPaid + this.totalPrincipal;
+        // avalanche calculations
+        const avalancheCards = [...this.creditCards].sort((a, b) => b.interest - a.interest);
+        const resultsAvalanche = this.financeService.calculatePayoff(avalancheCards, monthlyPayment);
+        this.monthsToPayoffAvalanche = resultsAvalanche.totalMonths;
+        this.totalInterestPaidAvalanche = this.parseTotalInterest(resultsAvalanche.metrics);
+        this.totalPaidAvalanche = this.totalInterestPaidAvalanche + this.totalPrincipal;
     }
     getTotalPrincipal(cards) {
         let sum = 0;
@@ -305,17 +336,9 @@ class HomeComponent {
     cardCreated() {
         this.displayForm = false;
     }
-    formatInputRow(row) {
-        const output = {};
-        output[0] = row;
-        for (let i = 0; i < this.inputData.length; ++i) {
-            output[this.inputData[i].position] = this.inputData[i][row];
-        }
-        return output;
-    }
 }
 HomeComponent.ɵfac = function HomeComponent_Factory(t) { return new (t || HomeComponent)(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdirectiveInject"](src_app_services_finance_service__WEBPACK_IMPORTED_MODULE_1__["FinanceService"])); };
-HomeComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdefineComponent"]({ type: HomeComponent, selectors: [["app-home"]], decls: 59, vars: 19, consts: [[1, "container"], [1, "configuration"], ["class", "cc-list", 3, "creditCards", "creditCardsChange", 4, "ngIf"], ["mat-raised-button", "", "color", "primary", 3, "click", 4, "ngIf"], [3, "creditCards", "creditCardsChange", "cardCreated", 4, "ngIf"], ["appearance", "outline"], ["matInput", "", "autocomplete", "off", 3, "ngModel", "ngModelChange"], ["mat-raised-button", "", "color", "primary", 3, "click"], [1, "mat-h1"], ["role", "list"], ["role", "listitem"], [1, "list-item"], [1, "cc-list", 3, "creditCards", "creditCardsChange"], [3, "creditCards", "creditCardsChange", "cardCreated"]], template: function HomeComponent_Template(rf, ctx) { if (rf & 1) {
+HomeComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdefineComponent"]({ type: HomeComponent, selectors: [["app-home"]], decls: 104, vars: 34, consts: [[1, "container"], [1, "configuration"], ["class", "cc-list", 3, "creditCards", "creditCardsChange", 4, "ngIf"], ["mat-raised-button", "", "color", "primary", 3, "click", 4, "ngIf"], [3, "creditCards", "creditCardsChange", "cardCreated", 4, "ngIf"], ["appearance", "outline"], ["matInput", "", "autocomplete", "off", 3, "ngModel", "ngModelChange"], ["mat-raised-button", "", "color", "primary", 3, "click"], [1, "mat-h1"], ["role", "list"], ["role", "listitem"], [1, "list-item"], [1, "cc-list", 3, "creditCards", "creditCardsChange"], [3, "creditCards", "creditCardsChange", "cardCreated"]], template: function HomeComponent_Template(rf, ctx) { if (rf & 1) {
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](0, "div", 0);
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](1, "div", 1);
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtemplate"](2, HomeComponent_app_cred_card_list_2_Template, 1, 1, "app-cred-card-list", 2);
@@ -341,7 +364,7 @@ HomeComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdefineComp
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelement"](16, "br");
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](17, "mat-card");
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](18, "h1", 8);
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](19, "Your Results");
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](19, "Your Results (Snowball)");
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](20, "mat-list", 9);
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](21, "mat-list-item", 10);
@@ -406,6 +429,76 @@ HomeComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdefineComp
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelement"](59, "br");
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelement"](60, "mat-divider");
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelement"](61, "br");
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](62, "mat-card");
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](63, "h1", 8);
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](64, "Your Results (Avalanche)");
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](65, "mat-list", 9);
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](66, "mat-list-item", 10);
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](67, "div", 11);
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](68, "div");
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](69, "Monthly payment");
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](70, "div");
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](71, "b");
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](72);
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵpipe"](73, "currency");
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](74, "mat-list-item", 10);
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](75, "div", 11);
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](76, "div");
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](77, "Total Time");
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](78, "div");
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](79, "b");
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](80);
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵpipe"](81, "prettyMonth");
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](82, "mat-list-item", 10);
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](83, "div", 11);
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](84, "div");
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](85, "Total Principal Paid");
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](86, "div");
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](87);
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵpipe"](88, "currency");
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelement"](89, "mat-divider");
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](90, "mat-list-item", 10);
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](91, "div", 11);
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](92, "div");
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](93, "Total Interest Paid");
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](94, "div");
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](95);
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵpipe"](96, "currency");
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](97, "mat-list-item", 10);
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](98, "div", 11);
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](99, "div");
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](100, "Total Paid");
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](101, "div");
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](102);
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵpipe"](103, "currency");
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
     } if (rf & 2) {
@@ -418,16 +511,26 @@ HomeComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdefineComp
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](7);
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("ngModel", ctx.monthlyPayment);
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](16);
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtextInterpolate1"]("", _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵpipeBind1"](28, 9, ctx.monthlyPayment), " ");
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtextInterpolate1"]("", _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵpipeBind1"](28, 14, ctx.monthlyPayment), " ");
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](8);
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtextInterpolate"](_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵpipeBind1"](36, 11, ctx.monthsToPayoff));
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtextInterpolate"](_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵpipeBind1"](36, 16, ctx.monthsToPayoff));
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](7);
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtextInterpolate"](_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵpipeBind1"](43, 13, ctx.totalPrincipal));
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtextInterpolate"](_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵpipeBind1"](43, 18, ctx.totalPrincipal));
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](8);
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtextInterpolate"](_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵpipeBind1"](51, 15, ctx.totalInterestPaid));
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtextInterpolate"](_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵpipeBind1"](51, 20, ctx.totalInterestPaid));
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](7);
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtextInterpolate"](_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵpipeBind1"](58, 17, ctx.totalPaid));
-    } }, directives: [_angular_common__WEBPACK_IMPORTED_MODULE_2__["NgIf"], _angular_material_divider__WEBPACK_IMPORTED_MODULE_3__["MatDivider"], _angular_material_form_field__WEBPACK_IMPORTED_MODULE_4__["MatFormField"], _angular_material_form_field__WEBPACK_IMPORTED_MODULE_4__["MatLabel"], _angular_material_input__WEBPACK_IMPORTED_MODULE_5__["MatInput"], _angular_forms__WEBPACK_IMPORTED_MODULE_6__["DefaultValueAccessor"], _angular_forms__WEBPACK_IMPORTED_MODULE_6__["NgControlStatus"], _angular_forms__WEBPACK_IMPORTED_MODULE_6__["NgModel"], _angular_material_button__WEBPACK_IMPORTED_MODULE_7__["MatButton"], _angular_material_card__WEBPACK_IMPORTED_MODULE_8__["MatCard"], _angular_material_list__WEBPACK_IMPORTED_MODULE_9__["MatList"], _angular_material_list__WEBPACK_IMPORTED_MODULE_9__["MatListItem"], _cred_card_list_cred_card_list_component__WEBPACK_IMPORTED_MODULE_10__["CredCardListComponent"], _add_card_form_add_card_form_component__WEBPACK_IMPORTED_MODULE_11__["AddCardFormComponent"]], pipes: [_angular_common__WEBPACK_IMPORTED_MODULE_2__["CurrencyPipe"], src_app_pipes_pretty_months_pipe__WEBPACK_IMPORTED_MODULE_12__["PrettyMonth"]], styles: [".container[_ngcontent-%COMP%] {\n  display: flex;\n  flex-direction: column;\n}\n\n.chart[_ngcontent-%COMP%] {\n  flex: 3;\n}\n\n.configuration[_ngcontent-%COMP%] {\n  flex: 1;\n  display: flex;\n  flex-direction: column;\n  padding: 15px;\n}\n\n.add-card[_ngcontent-%COMP%] {\n  flex: 1;\n}\n\n.cc-list[_ngcontent-%COMP%] {\n  flex: 3;\n}\n\n.calculations[_ngcontent-%COMP%] {\n  flex: 1;\n  display: flex;\n  flex-direction: column;\n}\n\n.list-item[_ngcontent-%COMP%] {\n  width: 100%;\n  display: flex;\n  justify-content: space-between;\n}\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbInNyYy9hcHAvY29tcG9uZW50cy9ob21lL2hvbWUuY29tcG9uZW50LnNjc3MiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IkFBQUE7RUFDRSxhQUFBO0VBQ0Esc0JBQUE7QUFDRjs7QUFFQTtFQUNFLE9BQUE7QUFDRjs7QUFFQTtFQUNFLE9BQUE7RUFDQSxhQUFBO0VBQ0Esc0JBQUE7RUFDQSxhQUFBO0FBQ0Y7O0FBRUE7RUFDRSxPQUFBO0FBQ0Y7O0FBRUE7RUFDRSxPQUFBO0FBQ0Y7O0FBRUE7RUFDRSxPQUFBO0VBQ0EsYUFBQTtFQUNBLHNCQUFBO0FBQ0Y7O0FBRUE7RUFDRSxXQUFBO0VBQ0EsYUFBQTtFQUNBLDhCQUFBO0FBQ0YiLCJmaWxlIjoic3JjL2FwcC9jb21wb25lbnRzL2hvbWUvaG9tZS5jb21wb25lbnQuc2NzcyIsInNvdXJjZXNDb250ZW50IjpbIi5jb250YWluZXIge1xuICBkaXNwbGF5OiBmbGV4O1xuICBmbGV4LWRpcmVjdGlvbjogY29sdW1uO1xufVxuXG4uY2hhcnQge1xuICBmbGV4OiAzO1xufVxuXG4uY29uZmlndXJhdGlvbiB7XG4gIGZsZXg6IDE7XG4gIGRpc3BsYXk6IGZsZXg7XG4gIGZsZXgtZGlyZWN0aW9uOiBjb2x1bW47XG4gIHBhZGRpbmc6IDE1cHg7XG59XG5cbi5hZGQtY2FyZCB7XG4gIGZsZXg6IDE7XG59XG5cbi5jYy1saXN0IHtcbiAgZmxleDogMztcbn1cblxuLmNhbGN1bGF0aW9ucyB7XG4gIGZsZXg6IDE7XG4gIGRpc3BsYXk6IGZsZXg7XG4gIGZsZXgtZGlyZWN0aW9uOiBjb2x1bW47XG59XG5cbi5saXN0LWl0ZW0ge1xuICB3aWR0aDogMTAwJTtcbiAgZGlzcGxheTogZmxleDtcbiAganVzdGlmeS1jb250ZW50OiBzcGFjZS1iZXR3ZWVuO1xufVxuIl19 */"] });
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtextInterpolate"](_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵpipeBind1"](58, 22, ctx.totalPaid));
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](15);
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtextInterpolate1"]("", _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵpipeBind1"](73, 24, ctx.monthlyPayment), " ");
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](8);
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtextInterpolate"](_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵpipeBind1"](81, 26, ctx.monthsToPayoffAvalanche));
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](7);
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtextInterpolate"](_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵpipeBind1"](88, 28, ctx.totalPrincipal));
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](8);
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtextInterpolate"](_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵpipeBind1"](96, 30, ctx.totalInterestPaidAvalanche));
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](7);
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtextInterpolate"](_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵpipeBind1"](103, 32, ctx.totalPaidAvalanche));
+    } }, directives: [_angular_common__WEBPACK_IMPORTED_MODULE_2__["NgIf"], _angular_material_divider__WEBPACK_IMPORTED_MODULE_3__["MatDivider"], _angular_material_form_field__WEBPACK_IMPORTED_MODULE_4__["MatFormField"], _angular_material_form_field__WEBPACK_IMPORTED_MODULE_4__["MatLabel"], _angular_material_input__WEBPACK_IMPORTED_MODULE_5__["MatInput"], _angular_forms__WEBPACK_IMPORTED_MODULE_6__["DefaultValueAccessor"], _angular_forms__WEBPACK_IMPORTED_MODULE_6__["NgControlStatus"], _angular_forms__WEBPACK_IMPORTED_MODULE_6__["NgModel"], _angular_material_button__WEBPACK_IMPORTED_MODULE_7__["MatButton"], _angular_material_card__WEBPACK_IMPORTED_MODULE_8__["MatCard"], _angular_material_list__WEBPACK_IMPORTED_MODULE_9__["MatList"], _angular_material_list__WEBPACK_IMPORTED_MODULE_9__["MatListItem"], _cred_card_list_cred_card_list_component__WEBPACK_IMPORTED_MODULE_10__["CredCardListComponent"], _add_card_form_add_card_form_component__WEBPACK_IMPORTED_MODULE_11__["AddCardFormComponent"]], pipes: [_angular_common__WEBPACK_IMPORTED_MODULE_2__["CurrencyPipe"], src_app_pipes_pretty_months_pipe__WEBPACK_IMPORTED_MODULE_12__["PrettyMonth"]], styles: [".container[_ngcontent-%COMP%] {\n  display: flex;\n  flex-direction: column;\n}\n\n.chart[_ngcontent-%COMP%] {\n  flex: 3;\n}\n\n.configuration[_ngcontent-%COMP%] {\n  flex: 1;\n  display: flex;\n  flex-direction: column;\n  padding: 15px;\n}\n\n.add-card[_ngcontent-%COMP%] {\n  flex: 1;\n}\n\n.cc-list[_ngcontent-%COMP%] {\n  flex: 3;\n}\n\n.calculations[_ngcontent-%COMP%] {\n  flex: 1;\n  display: flex;\n  flex-direction: column;\n}\n\n.list-item[_ngcontent-%COMP%] {\n  width: 100%;\n  display: flex;\n  justify-content: space-between;\n}\n\n.example-container[_ngcontent-%COMP%] {\n  height: 400px;\n  width: 550px;\n  max-width: 100%;\n  overflow: auto;\n}\n\ntd.mat-column-star[_ngcontent-%COMP%] {\n  width: 20px;\n  padding-right: 8px;\n}\n\nth.mat-column-position[_ngcontent-%COMP%], td.mat-column-position[_ngcontent-%COMP%] {\n  padding-left: 8px;\n}\n\n.mat-table-sticky[_ngcontent-%COMP%]:first-child {\n  border-right: 1px solid #e0e0e0;\n}\n\n.mat-table-sticky[_ngcontent-%COMP%]:last-child {\n  border-left: 1px solid #e0e0e0;\n}\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbInNyYy9hcHAvY29tcG9uZW50cy9ob21lL2hvbWUuY29tcG9uZW50LnNjc3MiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IkFBQUE7RUFDRSxhQUFBO0VBQ0Esc0JBQUE7QUFDRjs7QUFFQTtFQUNFLE9BQUE7QUFDRjs7QUFFQTtFQUNFLE9BQUE7RUFDQSxhQUFBO0VBQ0Esc0JBQUE7RUFDQSxhQUFBO0FBQ0Y7O0FBRUE7RUFDRSxPQUFBO0FBQ0Y7O0FBRUE7RUFDRSxPQUFBO0FBQ0Y7O0FBRUE7RUFDRSxPQUFBO0VBQ0EsYUFBQTtFQUNBLHNCQUFBO0FBQ0Y7O0FBRUE7RUFDRSxXQUFBO0VBQ0EsYUFBQTtFQUNBLDhCQUFBO0FBQ0Y7O0FBRUE7RUFDRSxhQUFBO0VBQ0EsWUFBQTtFQUNBLGVBQUE7RUFDQSxjQUFBO0FBQ0Y7O0FBTUE7RUFDRSxXQUFBO0VBQ0Esa0JBQUE7QUFIRjs7QUFNQTtFQUNFLGlCQUFBO0FBSEY7O0FBTUE7RUFDRSwrQkFBQTtBQUhGOztBQU1BO0VBQ0UsOEJBQUE7QUFIRiIsImZpbGUiOiJzcmMvYXBwL2NvbXBvbmVudHMvaG9tZS9ob21lLmNvbXBvbmVudC5zY3NzIiwic291cmNlc0NvbnRlbnQiOlsiLmNvbnRhaW5lciB7XG4gIGRpc3BsYXk6IGZsZXg7XG4gIGZsZXgtZGlyZWN0aW9uOiBjb2x1bW47XG59XG5cbi5jaGFydCB7XG4gIGZsZXg6IDM7XG59XG5cbi5jb25maWd1cmF0aW9uIHtcbiAgZmxleDogMTtcbiAgZGlzcGxheTogZmxleDtcbiAgZmxleC1kaXJlY3Rpb246IGNvbHVtbjtcbiAgcGFkZGluZzogMTVweDtcbn1cblxuLmFkZC1jYXJkIHtcbiAgZmxleDogMTtcbn1cblxuLmNjLWxpc3Qge1xuICBmbGV4OiAzO1xufVxuXG4uY2FsY3VsYXRpb25zIHtcbiAgZmxleDogMTtcbiAgZGlzcGxheTogZmxleDtcbiAgZmxleC1kaXJlY3Rpb246IGNvbHVtbjtcbn1cblxuLmxpc3QtaXRlbSB7XG4gIHdpZHRoOiAxMDAlO1xuICBkaXNwbGF5OiBmbGV4O1xuICBqdXN0aWZ5LWNvbnRlbnQ6IHNwYWNlLWJldHdlZW47XG59XG5cbi5leGFtcGxlLWNvbnRhaW5lciB7XG4gIGhlaWdodDogNDAwcHg7XG4gIHdpZHRoOiA1NTBweDtcbiAgbWF4LXdpZHRoOiAxMDAlO1xuICBvdmVyZmxvdzogYXV0bztcbn1cblxuLy90YWJsZSB7XG4gIC8vd2lkdGg6IDgwMHB4O1xuLy99XG5cbnRkLm1hdC1jb2x1bW4tc3RhciB7XG4gIHdpZHRoOiAyMHB4O1xuICBwYWRkaW5nLXJpZ2h0OiA4cHg7XG59XG5cbnRoLm1hdC1jb2x1bW4tcG9zaXRpb24sIHRkLm1hdC1jb2x1bW4tcG9zaXRpb24ge1xuICBwYWRkaW5nLWxlZnQ6IDhweDtcbn1cblxuLm1hdC10YWJsZS1zdGlja3k6Zmlyc3QtY2hpbGQge1xuICBib3JkZXItcmlnaHQ6IDFweCBzb2xpZCAjZTBlMGUwO1xufVxuXG4ubWF0LXRhYmxlLXN0aWNreTpsYXN0LWNoaWxkIHtcbiAgYm9yZGVyLWxlZnQ6IDFweCBzb2xpZCAjZTBlMGUwO1xufVxuIl19 */"] });
 /*@__PURE__*/ (function () { _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵsetClassMetadata"](HomeComponent, [{
         type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Component"],
         args: [{
@@ -892,51 +995,12 @@ __webpack_require__.r(__webpack_exports__);
 
 
 const DEBUG = false;
-//export interface Metrics {
-//month: number;
-//interest: number;
-//payment: number;
-//principal: number;
-//balance: number;
-//interestAccrued: number;
-//}
 class FinanceService {
     constructor() {
-        this.months = [
-            'January',
-            'February',
-            'March',
-            'April',
-            'May',
-            'June',
-            'July',
-            'August',
-            'September',
-            'October',
-            'November',
-            'December',
-        ];
         /** represents the max amount of months we will make calculations
          *  the assumption is that you should never need 40 years to pay off cc debt
          */
         this.maxMonths = 40 * 12;
-    }
-    computeTotalBalance(cards) {
-        let totalBalance = 0;
-        for (const card of cards) {
-            totalBalance += card.balance;
-        }
-        return totalBalance;
-    }
-    getInterest(balance, dailyInterest) {
-        return (30 * balance * dailyInterest) + balance;
-    }
-    shallowCopy(card) {
-        return {
-            name: card.name,
-            balance: card.balance,
-            interest: card.interest,
-        };
     }
     constructCardObjs(creditCards) {
         const cards = [];
@@ -964,46 +1028,6 @@ class FinanceService {
                 card.unfocus();
             }
         }
-    }
-    payAllCards(cards, payment) {
-        // if a card is paid off in one iteration, then the remaining payment will
-        // go toward the next card. This includes minimum payments as well.
-        let remainingMoney = 0;
-        let totalPayment = 0;
-        for (const card of cards) {
-            let paymentAmount = 0;
-            if (card.focused) {
-                paymentAmount = payment;
-            }
-            else {
-                paymentAmount = card.minimumPayment;
-            }
-            const leftOver = card.balance - paymentAmount;
-            if (leftOver < 0) {
-                remainingMoney += -leftOver;
-                paymentAmount -= remainingMoney;
-            }
-            const finalPayment = paymentAmount + remainingMoney;
-            totalPayment += finalPayment;
-            card.applyPayment(finalPayment);
-        }
-        // moves the focused card to next if current card has been paid off
-        // during this iteration
-        this.findAndFocusCard(cards);
-        return totalPayment;
-    }
-    applyInterest(cards) {
-        for (const card of cards) {
-            if (!card.isPaidOff()) {
-                card.applyInterest();
-            }
-        }
-    }
-    calculateMontlyPayment(cards, payment) {
-        for (const card of cards) {
-            payment -= card.minimumPayment;
-        }
-        return payment;
     }
     calculateInterest(balance, interest) {
         const apr = interest / 100;
@@ -1077,70 +1101,6 @@ class FinanceService {
         };
         return results;
     }
-    computeInterest(creditCards, monthlyPayment) {
-        let currentCardIndex = 0;
-        let results = [];
-        const today = new Date();
-        let year = today.getFullYear();
-        const startYear = year;
-        let currentMonth = today.getMonth();
-        const ccCopy = [];
-        let totalBalance = this.computeTotalBalance(creditCards);
-        const cardMap = { Total: [{
-                    name: `${this.months[currentMonth]} '${year - 2000}`,
-                    value: Math.trunc(totalBalance),
-                }] };
-        for (const card of creditCards) {
-            let fuck = this.shallowCopy(card);
-            ccCopy.push(fuck);
-            cardMap[card.name] = [{
-                    name: `${this.months[currentMonth]} '${year - 2000}`,
-                    value: Math.trunc(card.balance),
-                }];
-        }
-        currentMonth += currentMonth >= this.months.length - 1 ? -currentMonth : 1;
-        if (currentMonth === 0) {
-            year++;
-        }
-        do {
-            // pay down current card
-            ccCopy[currentCardIndex].balance -= monthlyPayment;
-            if (ccCopy[currentCardIndex].balance < 0) {
-                ccCopy[currentCardIndex].balance = 0;
-            }
-            totalBalance = 0;
-            for (let i = 0; i < ccCopy.length; i++) {
-                // apply interest to all cards
-                const dailyInterest = ccCopy[i].interest / 100 / 365;
-                ccCopy[i].balance = this.getInterest(ccCopy[i].balance, dailyInterest);
-                // calculate total balance
-                totalBalance += ccCopy[i].balance;
-                // apply balance to appropriate card series
-                cardMap[ccCopy[i].name].push({
-                    name: `${this.months[currentMonth]} '${year - 2000}`,
-                    value: Math.trunc(ccCopy[i].balance),
-                });
-            }
-            // add total balance to series
-            cardMap['Total'].push({
-                name: `${this.months[currentMonth]} '${year - 2000}`,
-                value: Math.trunc(totalBalance),
-            });
-            // increment current card if balance is 0
-            currentMonth += currentMonth >= this.months.length - 1 ? -currentMonth : 1;
-            if (currentMonth === 0) {
-                year++;
-            }
-            if (ccCopy[currentCardIndex].balance <= 0) {
-                currentCardIndex++;
-            }
-        } while (totalBalance > 0 && year < startYear + 40 && currentCardIndex < ccCopy.length);
-        // apply to graph
-        for (var key of Object.keys(cardMap)) {
-            results.push({ name: key, series: cardMap[key] });
-        }
-        return results;
-    }
 }
 FinanceService.ɵfac = function FinanceService_Factory(t) { return new (t || FinanceService)(); };
 FinanceService.ɵprov = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdefineInjectable"]({ token: FinanceService, factory: FinanceService.ɵfac, providedIn: 'root' });
@@ -1170,12 +1130,8 @@ class Card {
         this.interest = interest;
         this.name = name;
         this.focused = false;
-        this.dailyInterest = this.interest / 100 / 365;
         this.minimumPayment = minimumPayment;
         this.interestAccrued = 0;
-    }
-    applyInterest() {
-        this.balance = (30 * this.balance * this.dailyInterest) + this.balance;
     }
     isPaidOff() {
         return this.balance <= 0;
