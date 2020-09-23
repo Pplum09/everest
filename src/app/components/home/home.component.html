@@ -33,7 +33,7 @@
     <br />
 
     <mat-card>
-      <h1 class="mat-h1">Your Results</h1>
+      <h1 class="mat-h1">Your Results (Snowball)</h1>
       <mat-list role="list">
         <mat-list-item role="listitem">
           <div class="list-item">
@@ -54,7 +54,7 @@
         <mat-list-item role="listitem">
           <div class="list-item">
             <div>Total Principal Paid</div>
-            <div>{{ this.totalPrincipal | currency }}</div>
+            <div>{{ totalPrincipal | currency }}</div>
           </div>
         </mat-list-item>
         <mat-divider></mat-divider>
@@ -72,7 +72,99 @@
         </mat-list-item>
       </mat-list>
     </mat-card>
+    <br />
+    <mat-divider></mat-divider>
+    <br />
+    <mat-card>
+      <h1 class="mat-h1">Your Results (Avalanche)</h1>
+      <mat-list role="list">
+        <mat-list-item role="listitem">
+          <div class="list-item">
+            <div>Monthly payment</div>
+            <div>
+              <b>{{ monthlyPayment | currency }} </b>
+            </div>
+          </div>
+        </mat-list-item>
+        <mat-list-item role="listitem">
+          <div class="list-item">
+            <div>Total Time</div>
+            <div>
+              <b>{{ monthsToPayoffAvalanche | prettyMonth }}</b>
+            </div>
+          </div>
+        </mat-list-item>
+        <mat-list-item role="listitem">
+          <div class="list-item">
+            <div>Total Principal Paid</div>
+            <div>{{ totalPrincipal | currency }}</div>
+          </div>
+        </mat-list-item>
+        <mat-divider></mat-divider>
+        <mat-list-item role="listitem">
+          <div class="list-item">
+            <div>Total Interest Paid</div>
+            <div>{{ totalInterestPaidAvalanche | currency }}</div>
+          </div>
+        </mat-list-item>
+        <mat-list-item role="listitem">
+          <div class="list-item">
+            <div>Total Paid</div>
+            <div>{{ totalPaidAvalanche | currency }}</div>
+          </div>
+        </mat-list-item>
+      </mat-list>
+    </mat-card>
+    <!--<ngx-charts-pie-chart-->
+    <!--[view]=""-->
+    <!--scheme="vivid"-->
+    <!--[results]="single"-->
+    <!--[legend]="false"-->
+    <!--[explodeSlices]="false"-->
+    <!--[labels]="true"-->
+    <!--[doughnut]="false"-->
+    <!--[gradient]="gradient"-->
+    <!-->-->
+    <!--</ngx-charts-pie-chart>-->
   </div>
+  <!--<div class="example-container mat-elevation-z8">-->
+  <!--<table mat-table [dataSource]="dataSource">-->
+  <!--[> Name Column <]-->
+  <!--<ng-container matColumnDef="name" sticky>-->
+  <!--<th mat-header-cell *matHeaderCellDef>Name</th>-->
+  <!--<td mat-cell *matCellDef="let element">{{ element.name }}</td>-->
+  <!--</ng-container>-->
+
+  <!--[> Position Column <]-->
+  <!--<ng-container matColumnDef="position">-->
+  <!--<th mat-header-cell *matHeaderCellDef>No.</th>-->
+  <!--<td mat-cell *matCellDef="let element">{{ element.position }}</td>-->
+  <!--</ng-container>-->
+
+  <!--[> Weight Column <]-->
+  <!--<ng-container matColumnDef="weight">-->
+  <!--<th mat-header-cell *matHeaderCellDef>Weight</th>-->
+  <!--<td mat-cell *matCellDef="let element">{{ element.weight }}</td>-->
+  <!--</ng-container>-->
+
+  <!--[> Symbol Column <]-->
+  <!--<ng-container matColumnDef="symbol">-->
+  <!--<th mat-header-cell *matHeaderCellDef>Symbol</th>-->
+  <!--<td mat-cell *matCellDef="let element">{{ element.symbol }}</td>-->
+  <!--</ng-container>-->
+
+  <!--[> Star Column <]-->
+  <!--<ng-container matColumnDef="star" stickyEnd>-->
+  <!--<th mat-header-cell *matHeaderCellDef></th>-->
+  <!--<td mat-cell *matCellDef="let element">-->
+  <!--<mat-icon>more_vert</mat-icon>-->
+  <!--</td>-->
+  <!--</ng-container>-->
+
+  <!--<tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>-->
+  <!--<tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>-->
+  <!--</table>-->
+  <!--</div>-->
   <!--<div class="chart">-->
   <!--<ngx-charts-line-chart-->
   <!--[results]="data"-->

@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CreditCard } from 'src/app/models/credit-card.model';
 import { FinanceService } from 'src/app/services/finance.service';
 
+
 export interface PeriodicElement {
   name: string;
   position: number;
@@ -11,15 +12,39 @@ export interface PeriodicElement {
 
 const ELEMENT_DATA: PeriodicElement[] = [
   {position: 1, name: 'Hydrogen', weight: 1.0079, symbol: 'H'},
+  {position: 2, name: 'Helium', weight: 4.0026, symbol: 'He'},
+  {position: 3, name: 'Lithium', weight: 6.941, symbol: 'Li'},
+  {position: 4, name: 'Beryllium', weight: 9.0122, symbol: 'Be'},
+  {position: 5, name: 'Boron', weight: 10.811, symbol: 'B'},
+  {position: 6, name: 'Carbon', weight: 12.0107, symbol: 'C'},
+  {position: 7, name: 'Nitrogen', weight: 14.007, symbol: 'N'},
+  {position: 8, name: 'Oxygen', weight: 15.9994, symbol: 'O'},
+  {position: 9, name: 'Fluorine', weight: 18.9984, symbol: 'F'},
+  {position: 10, name: 'Neon', weight: 20.1797, symbol: 'Ne'},
 ];
-
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss'],
 })
 export class HomeComponent implements OnInit {
-
+ single = [
+  {
+    "name": "Germany",
+    "value": 8940000
+  },
+  {
+    "name": "USA",
+    "value": 5000000
+  },
+  {
+    "name": "France",
+    "value": 7200000
+  }
+];
+  displayedColumns =
+      ['name', 'position', 'weight', 'symbol', 'position', 'weight', 'symbol', 'star'];
+  dataSource = ELEMENT_DATA;
   public monthsToPayoff = 0;
   public totalPrincipal = 0;
   public totalInterestPaid = 0;
@@ -45,19 +70,15 @@ export class HomeComponent implements OnInit {
 
   public monthlyPayment = 500;
   public data = [];
-  inputColumns = ['position', 'name', 'weight', 'symbol'];
-  inputData = ELEMENT_DATA;
-  displayColumns: string[];
-  displayData: any[];
 
+  public monthsToPayoffAvalanche = 0;
+  public totalInterestPaidAvalanche = 0;
+  public totalPaidAvalanche = 0;
   constructor(
     public financeService: FinanceService,
   ) { }
 
-  ngOnInit(): void {
-        this.displayColumns = ['0'].concat(this.inputData.map(x => x.position.toString()));
-    this.displayData = this.inputColumns.map(x => this.formatInputRow(x));
-  }
+  ngOnInit(): void { }
 
   private parseTotalInterest(metrics): number {
     let total = 0;
@@ -70,10 +91,20 @@ export class HomeComponent implements OnInit {
     //this.data = this.financeService.computeInterest(this.creditCards, this.monthlyPayment);
     this.totalPrincipal = this.getTotalPrincipal(this.creditCards);
     const monthlyPayment = +this.monthlyPayment;
-    const results = this.financeService.calculatePayoff(this.creditCards, monthlyPayment);
+
+    // snowball calculations
+    const snowballCards = [...this.creditCards].sort((a, b) => a.balance - b.balance);
+    const results = this.financeService.calculatePayoff(snowballCards, monthlyPayment);
     this.monthsToPayoff = results.totalMonths;
     this.totalInterestPaid = this.parseTotalInterest(results.metrics);
     this.totalPaid = this.totalInterestPaid + this.totalPrincipal;
+
+    // avalanche calculations
+    const avalancheCards = [...this.creditCards].sort((a, b) => b.interest - a.interest);
+    const resultsAvalanche = this.financeService.calculatePayoff(avalancheCards, monthlyPayment);
+    this.monthsToPayoffAvalanche = resultsAvalanche.totalMonths;
+    this.totalInterestPaidAvalanche = this.parseTotalInterest(resultsAvalanche.metrics);
+    this.totalPaidAvalanche = this.totalInterestPaidAvalanche + this.totalPrincipal;
   }
 
   private getTotalPrincipal(cards: CreditCard[]): number {
@@ -107,16 +138,5 @@ export class HomeComponent implements OnInit {
 
   public cardCreated(): void {
     this.displayForm = false;
-  }
-
-  public formatInputRow(row) {
-    const output = {};
-
-    output[0] = row;
-    for (let i = 0; i < this.inputData.length; ++i) {
-      output[this.inputData[i].position] = this.inputData[i][row];
-    }
-
-    return output;
   }
 }

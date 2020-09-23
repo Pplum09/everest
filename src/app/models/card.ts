@@ -1,7 +1,6 @@
 export class Card {
   balance: number;
   interest: number;
-  dailyInterest: number;
   name: string;
   focused: boolean;
   minimumPayment: number;
@@ -12,13 +11,8 @@ export class Card {
     this.interest = interest;
     this.name = name;
     this.focused = false;
-    this.dailyInterest = this.interest / 100 / 365;
     this.minimumPayment = minimumPayment;
     this.interestAccrued = 0;
-  }
-
-  public applyInterest(): void {
-    this.balance = (30 * this.balance * this.dailyInterest) + this.balance;
   }
 
   public isPaidOff(): boolean {
